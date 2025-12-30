@@ -71,15 +71,21 @@ def parse(transcript: str, context: dict | None = None) -> Highlight:
             if context.get("recent"):
                 context_str += "\nRecent highlights:"
                 for r in context["recent"]:
-                    context_str += f"\n- [{r.get('title', 'Unknown')}] {r.get('text', '')[:100]}"
+                    context_str += (
+                        f"\n- [{r.get('title', 'Unknown')}] {r.get('text', '')[:100]}"
+                    )
 
         user_content = f"Transcript: {transcript}"
         if context_str:
             user_content += f"\n\nContext:{context_str}"
 
+        if settings.debug:
+            print(f"\n[DEBUG] Transcript: {transcript}")
+            print(f"[DEBUG] User content sent to Claude:\n{user_content}\n")
+
         response = client.beta.messages.parse(
             model="claude-haiku-4-5-20251001",
-            max_tokens=1024,
+            max_tokens=4096,
             betas=["structured-outputs-2025-11-13"],
             system=SYSTEM_PROMPT,
             messages=[{"role": "user", "content": user_content}],
@@ -88,13 +94,25 @@ def parse(transcript: str, context: dict | None = None) -> Highlight:
 
         parsed = response.parsed_output
 
+        if settings.debug:
+            print(f"[DEBUG] Claude response: {parsed}\n")
+
         # Convert string values back to proper types, treating empty strings as None
         category = None
-        if parsed.category and parsed.category in ("books", "articles", "podcasts", "tweets"):
+        if parsed.category and parsed.category in (
+            "books",
+            "articles",
+            "podcasts",
+            "tweets",
+        ):
             category = Category(parsed.category)
 
         location_type = None
-        if parsed.location_type and parsed.location_type in ("page", "order", "time_offset"):
+        if parsed.location_type and parsed.location_type in (
+            "page",
+            "order",
+            "time_offset",
+        ):
             location_type = LocationType(parsed.location_type)
 
         return Highlight(

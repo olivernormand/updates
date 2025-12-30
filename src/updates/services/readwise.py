@@ -14,16 +14,21 @@ async def submit_highlight(highlight: Highlight) -> int:
 
     Returns:
         The Readwise highlight ID
+
+    Raises:
+        ReadwiseError: If title is missing or submission fails
     """
+    if not highlight.title:
+        raise ReadwiseError("Title is required for Readwise submission")
+
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             highlight_data = {
                 "text": highlight.text,
+                "title": highlight.title,
                 "source_type": "updates_app",
             }
 
-            if highlight.title:
-                highlight_data["title"] = highlight.title
             if highlight.author:
                 highlight_data["author"] = highlight.author
             if highlight.category:

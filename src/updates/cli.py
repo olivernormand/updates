@@ -99,9 +99,12 @@ def process_audio(audio_data: np.ndarray, sample_rate: int = 44100) -> None:
 
 
 @click.group(invoke_without_command=True)
+@click.option("--debug", is_flag=True, help="Enable debug output")
 @click.pass_context
-def cli(ctx):
+def cli(ctx, debug: bool):
     """Updates CLI - Voice-to-Readwise capture tool."""
+    if debug:
+        settings.debug = True
     if ctx.invoked_subcommand is None:
         # Default command: start interactive mode
         ctx.invoke(start)
