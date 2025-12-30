@@ -1,0 +1,34 @@
+[project]
+name = "updates"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Oliver Normand", email = "oliver@normand.uk" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "elevenlabs>=2.27.0",
+    "fastapi>=0.128.0",
+    "python-dotenv>=1.2.1",
+    "httpx>=0.28.0",
+    "anthropic>=0.45.0",
+    "python-multipart>=0.0.20",
+    "pydantic-settings>=2.7.0",
+    "uvicorn>=0.34.0",
+    "click>=8.1.0",
+    "sounddevice>=0.5.0",
+    "scipy>=1.14.0",
+]
+
+[project.scripts]
+updates = "updates.cli:cli"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.1.0",
+]
